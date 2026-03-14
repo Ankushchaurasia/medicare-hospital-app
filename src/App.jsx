@@ -1,5 +1,5 @@
 
-// export default App;
+
 import { Routes, Route, useLocation } from 'react-router-dom'; 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -12,7 +12,7 @@ import Services from './pages/Services';
 import ServiceBooking from './pages/ServiceBooking';
 import DoctorDashboard from './pages/DoctorDashboard';
 
-// 👇 Ye dono import hona bahut zaroori hai 👇
+
 import Appointment from './pages/Appointment';
 import MyBookings from './pages/MyBookings';
 
@@ -35,7 +35,7 @@ function App() {
           <Route path="/services/:id" element={<ServiceBooking />} />
           <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
           
-          {/* 👇 YAHAN FIX HUA HAI (Sahi routes lagaye hain) 👇 */}
+         
           <Route path="/appointments" element={<Appointment />} />
           <Route path="/my-bookings" element={<MyBookings />} />
         </Routes>

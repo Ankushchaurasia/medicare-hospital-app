@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Service add with Image upload
+
 router.post('/add', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success: false, message: 'Please upload a photo!' });
@@ -40,7 +40,7 @@ router.get('/:id', async (req, res) => {
     res.status(200).json(service);
   } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
-// DELETE SERVICE
+
 router.delete('/delete/:id', async (req, res) => {
   try {
     await require('../models/Service').findByIdAndDelete(req.params.id);

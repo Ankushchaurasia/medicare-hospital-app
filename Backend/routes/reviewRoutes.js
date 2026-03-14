@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const Review = require('../models/Review');
 
-// Folder create check
+
 const uploadDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Add Review with Photo
+
 router.post('/add', upload.single('image'), async (req, res) => {
   try {
     let imageUrl = '';
@@ -47,7 +47,7 @@ router.delete('/delete/:id', async (req, res) => {
     res.status(200).json({ success: true });
   } catch (error) { res.status(500).json({ success: false }); }
 });
-// 🟢 DELETE REVIEW ROUTE
+
 router.delete('/delete/:id', async (req, res) => {
   try {
     const Review = require('../models/Review'); // Model import

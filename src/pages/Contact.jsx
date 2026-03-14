@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 
 const Contact = () => {
-  // 1. Data structure for Departments and their respective Services
   const medicalData = {
     "Cardiology": ["ECG", "Echocardiogram", "Heart Checkup", "Angiography"],
     "Orthopedics": ["X-Ray", "Bone Density Test", "Joint Pain Consultation", "Physiotherapy"],
@@ -10,8 +9,6 @@ const Contact = () => {
     "General Medicine": ["Viral Fever Treatment", "Blood Pressure Check", "General Checkup"],
     "Pediatrics": ["Vaccination", "Child Growth Tracking", "Fever/Cold"]
   };
-
-  // 2. State to store form input values
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [selectedDept, setSelectedDept] = useState('');
   const [selectedService, setSelectedService] = useState('');
@@ -19,26 +16,20 @@ const Contact = () => {
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  // 3. WhatsApp Redirect Function
   const handleWhatsApp = () => {
     const phoneNumber = "7307520789"; 
     const text = `*New Inquiry*%0A*Name:* ${formData.name}%0A*Phone:* ${formData.phone}%0A*Email:* ${formData.email}%0A*Department:* ${selectedDept}%0A*Service:* ${selectedService}%0A*Message:* ${formData.message}`;
     window.open(`https://wa.me/${phoneNumber}?text=${text}`, '_blank');
   };
 
-  // 4. Send to Admin Panel (MongoDB)
   const handleSendToAdmin = async () => {
     if (!formData.name || !formData.email || !formData.message) {
       alert("Please fill Name, Email, and Message fields.");
       return;
     }
-
-    // Backend ke liye data taiyar karna
     const adminMessageData = {
       name: formData.name,
       email: formData.email,
-      // Subject me hum Department aur Service jod denge
       subject: `Inquiry for: ${selectedDept || 'General'} ${selectedService ? '- ' + selectedService : ''}`,
       message: `Phone: ${formData.phone}\n\nMessage: ${formData.message}`
     };
@@ -116,7 +107,7 @@ const Contact = () => {
               <textarea name="message" value={formData.message} onChange={handleInputChange} placeholder="Describe your concern briefly..." rows="4" className="w-full border border-green-200 p-4 rounded-2xl outline-none focus:border-green-500 text-sm resize-none"></textarea>
             </div>
 
-            {/* Action Buttons */}
+     {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mt-2">
               <button type="button" onClick={handleWhatsApp} className="bg-[#00a884] text-white font-bold py-3.5 px-6 rounded-full shadow-lg shadow-green-200 flex-1 flex justify-center items-center gap-2 hover:bg-[#008f6f] transition">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>

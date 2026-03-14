@@ -9,11 +9,10 @@ const ServiceBooking = () => {
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🟢 Bill dikhane aur loading ke liye Nayi States
   const [generatedBill, setGeneratedBill] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Booking States (Aapke original states)
+
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
@@ -36,7 +35,7 @@ const ServiceBooking = () => {
     fetchServiceDetails();
   }, [id]);
 
-  // 🟢 GUARANTEED BILL GENERATION LOGIC
+ 
   const handleBooking = async () => {
     if (!selectedDate || !selectedTime || !patientDetails.name || !patientDetails.phone) {
       alert("Please fill all details, select date and time.");
@@ -48,9 +47,9 @@ const ServiceBooking = () => {
       if (!confirmPayment) return;
     }
 
-    setIsProcessing(true); // Button ko processing me dalne ke liye
+    setIsProcessing(true);
 
-    // Fake Transaction ID generate karna
+ 
     const fakeTxnId = paymentMethod === 'Online' 
       ? "TXN_" + Math.floor(Math.random() * 1000000000) 
       : "CASH_" + Math.floor(Math.random() * 1000000000);
@@ -71,7 +70,7 @@ const ServiceBooking = () => {
     };
 
     try {
-      // Aapke code ke hisaab se /book route par bhej rahe hain
+   
       const res = await fetch('http://localhost:5000/api/appointments/book', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -80,7 +79,7 @@ const ServiceBooking = () => {
       const data = await res.json();
       
       if (data.success || data._id) {
-        // 🟢 ALERTS HATAA KAR SEEDHA BILL DIKHAO
+        
         setGeneratedBill(bookingData);
       } else {
         alert("❌ Error booking: " + data.message);
@@ -100,10 +99,10 @@ const ServiceBooking = () => {
     <div className="min-h-screen bg-[#f4fbf7] py-12 px-6 relative">
       <div className="max-w-6xl mx-auto">
         
-        {/* 👇👇👇 AAPKA 100% ORIGINAL UI YAHAN SE SHURU HAI 👇👇👇 */}
+       
         <Link to="/services" className="inline-block mb-6 text-green-600 font-bold hover:text-green-800 transition">← Back to Services</Link>
 
-        {/* Service Details Card */}
+       
         <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-green-50 flex flex-col md:flex-row gap-10 mb-10">
           <div className="md:w-1/3">
             <img src={service.image || 'https://via.placeholder.com/400x300'} alt={service.name} className="w-full h-64 object-cover rounded-3xl shadow-sm" />
@@ -119,12 +118,11 @@ const ServiceBooking = () => {
           </div>
         </div>
 
-        {/* Booking Section */}
         <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-green-50">
           <h2 className="text-3xl font-bold text-gray-800 mb-8">📅 Schedule This Test/Service</h2>
           <div className="flex flex-col lg:flex-row gap-12">
             
-            {/* Form Area */}
+          
             <div className="lg:w-1/2 space-y-8">
               <div>
                 <h3 className="text-lg font-bold text-gray-700 mb-4">🗓️ Select Date *</h3>
@@ -151,7 +149,7 @@ const ServiceBooking = () => {
               </div>
             </div>
 
-            {/* Summary Area */}
+          
             <div className="lg:w-1/2 bg-[#f0fdf4] p-8 rounded-3xl border border-green-100 h-fit">
               <h3 className="text-xl font-bold text-gray-800 mb-6">Booking Summary</h3>
               <div className="space-y-4 mb-8">
@@ -172,13 +170,11 @@ const ServiceBooking = () => {
             </div>
           </div>
         </div>
-        {/* 👆👆👆 AAPKA 100% ORIGINAL UI YAHAN KHATAM HAI 👆👆👆 */}
+   
 
       </div>
 
-      {/* ========================================================= */}
-      {/* 🟢 BILL GENERATOR UI (Ye pop-up bankar aayega!) 🟢 */}
-      {/* ========================================================= */}
+   {/* billlogic */}
       {generatedBill && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl animate-fade-in-up">

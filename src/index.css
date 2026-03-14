@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
-/* 1. Horizontal Marquee (Right to Left) Seamless */
+
 @keyframes scroll-left {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } /* Moves exactly half the width */
+  100% { transform: translateX(-50%); }
 }
 .animate-scroll-left {
   display: flex;
@@ -11,25 +11,25 @@
   animation: scroll-left 15s linear infinite;
 }
 
-/* 2. Vertical Marquee (UP) Seamless */
+
 @keyframes scroll-up {
   0% { transform: translateY(0); }
-  100% { transform: translateY(-50%); } /* Moves exactly half the height */
+  100% { transform: translateY(-50%); } 
 }
 .animate-scroll-up {
   animation: scroll-up 15s linear infinite;
 }
 
-/* 3. Vertical Marquee (DOWN) Seamless */
+
 @keyframes scroll-down {
-  0% { transform: translateY(-50%); } /* Starts from middle */
+  0% { transform: translateY(-50%); }
   100% { transform: translateY(0); }
 }
 .animate-scroll-down {
   animation: scroll-down 15s linear infinite;
 }
 
-/* Hide Scrollbar */
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }

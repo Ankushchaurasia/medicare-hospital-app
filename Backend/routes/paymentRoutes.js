@@ -3,13 +3,13 @@ const router = express.Router();
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
-// Razorpay Dashboard se aapko ye Test Keys mil jayengi
+
 const razorpay = new Razorpay({
   key_id: 'rzp_test_YOUR_KEY_HERE',     // 👈 Yahan apni Test Key ID dalein
   key_secret: 'YOUR_SECRET_KEY_HERE'    // 👈 Yahan apna Test Secret dalein
 });
 
-// 1. Create Order (Payment Modal open hone se pehle order banta hai)
+
 router.post('/create-order', async (req, res) => {
   try {
     const options = {

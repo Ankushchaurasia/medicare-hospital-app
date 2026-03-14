@@ -17,14 +17,14 @@ router.get('/all', async (req, res) => {
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-// Message ko Read mark karna
+
 router.put('/mark-read/:id', async (req, res) => {
   try {
     await Message.findByIdAndUpdate(req.params.id, { isRead: true });
     res.json({ success: true });
   } catch (err) { res.status(500).json({ success: false }); }
 });
-// 🟢 DELETE MESSAGE ROUTE
+
 router.delete('/delete/:id', async (req, res) => {
   try {
     const Message = require('../models/Message'); // Model import

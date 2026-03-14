@@ -41,7 +41,7 @@ const DoctorProfile = () => {
     fetchDoctorDetails();
   }, [id]);
 
-  // 🟢 100% GUARANTEED BILL GENERATION LOGIC
+//  billlogic
   const handleBooking = async () => {
     if (!selectedDate || !selectedTime || !patientDetails.name || !patientDetails.phone) {
       alert("Please fill all details, select date and time.");
@@ -53,9 +53,8 @@ const DoctorProfile = () => {
       if (!confirmPayment) return; 
     }
 
-    setIsProcessing(true); // Button ko processing state me daalo
+    setIsProcessing(true); 
 
-    // Fake Loading (1.5 seconds) taaki payment jaisa feel aaye
     setTimeout(async () => {
       const fakeTxnId = paymentMethod === 'Online' 
         ? "TXN_" + Math.floor(Math.random() * 1000000000) 
@@ -78,11 +77,10 @@ const DoctorProfile = () => {
         adminEmail: doctor.adminEmail || '' 
       };
 
-      // 🟢 1. TURANT BILL DIKHAO (Screen par Pop-up aayega)
+     
       setGeneratedBill(bookingData);
       setIsProcessing(false);
 
-      // 🟢 2. CHUPCHAP DATABASE ME SAVE KARO (Backend me save hoga)
       try {
         await fetch('http://localhost:5000/api/appointments/book', {
           method: 'POST',
@@ -102,7 +100,6 @@ const DoctorProfile = () => {
     <div className="min-h-screen bg-[#f4fbf7] py-12 px-6 relative">
       <div className="max-w-6xl mx-auto">
         
-        {/* 👇👇👇 AAPKA 100% ORIGINAL UI 👇👇👇 */}
         <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-green-50 flex flex-col md:flex-row gap-10 mb-10">
           <div className="flex flex-col items-center md:w-1/3">
             <img src={doctor.image} alt={doctor.name} className="w-48 h-48 rounded-full object-cover border-4 border-[#eaf8f1] mb-6 shadow-sm" />
@@ -133,13 +130,12 @@ const DoctorProfile = () => {
           </div>
         </div>
 
-        {/* BOOKING SECTION */}
         <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-green-50">
           <h2 className="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-3">📅 Book Your Appointment</h2>
           
           <div className="flex flex-col lg:flex-row gap-12">
             
-            {/* LEFT SIDE: FORM AREA */}
+       
             <div className="lg:w-1/2 space-y-8">
               
               <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
@@ -204,7 +200,7 @@ const DoctorProfile = () => {
               </div>
             </div>
 
-            {/* RIGHT SIDE: SUMMARY & PAYMENT */}
+           
             <div className="lg:w-1/2 bg-[#f0fdf4] p-8 rounded-3xl border border-green-100 h-fit">
               <h3 className="text-xl font-bold text-gray-800 mb-6">Booking Summary</h3>
               <div className="space-y-4 mb-8">
@@ -240,10 +236,7 @@ const DoctorProfile = () => {
           </div>
         </div>
       </div>
-
-      {/* ========================================================= */}
-      {/* 🟢 BILL GENERATOR UI (Ye pop-up bankar aayega!) 🟢 */}
-      {/* ========================================================= */}
+ {/* billlogic */}
       {generatedBill && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl animate-fade-in-up">

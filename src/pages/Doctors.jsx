@@ -12,7 +12,7 @@ const Doctors = () => {
       try {
         const response = await fetch('http://localhost:5000/api/doctors/all');
         const data = await response.json();
-        setDoctors(data.filter(doc => doc.isAvailable)); // सिर्फ उपलब्ध डॉक्टर दिखाएं
+        setDoctors(data.filter(doc => doc.isAvailable)); 
         setLoading(false);
       } catch (error) {
         console.error("Error:", error);

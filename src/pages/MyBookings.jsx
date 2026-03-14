@@ -9,7 +9,7 @@ const MyBookings = () => {
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedBill, setSelectedBill] = useState(null);
 
-  // 🟢 Number se track karne ka function
+ 
   const handleTrackBooking = async (e) => {
     e.preventDefault();
     if (!phone || phone.length < 10) return alert("Please enter a valid phone number!");
@@ -32,7 +32,7 @@ const MyBookings = () => {
     <div className="min-h-screen bg-[#f4fbf7] py-12 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         
-        {/* HEADER & SEARCH BAR */}
+   
         <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-green-50 text-center mb-10">
           <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 shadow-inner">📱</div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Track Your Bookings</h1>
@@ -57,7 +57,7 @@ const MyBookings = () => {
           </form>
         </div>
 
-        {/* SEARCH RESULTS */}
+     
         {hasSearched && !loading && (
           <div>
             <h2 className="text-xl font-bold text-gray-700 mb-6 px-2">Records for: +91 {phone}</h2>
@@ -111,9 +111,7 @@ const MyBookings = () => {
 
       </div>
 
-      {/* ========================================================= */}
-      {/* 🟢 BILL GENERATOR UI (Pop-up Modal) 🟢 */}
-      {/* ========================================================= */}
+   {/* billlogic */}
       {selectedBill && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl animate-fade-in-up">

@@ -10,7 +10,6 @@ const Home = () => {
   const [dbDoctors, setDbDoctors] = useState([]);
   const [dbReviews, setDbReviews] = useState([]);
   
-  // 🟢 Nayi State Data ke liye (Default values agar net slow ho)
   const [homeData, setHomeData] = useState({
     heroTitle: 'Advanced Healthcare, Compassionate Professionals',
     heroSubtitle: 'Premium Healthcare At Your Fingertips',
@@ -20,8 +19,7 @@ const Home = () => {
   useEffect(() => {
     fetch('http://localhost:5000/api/doctors/all').then(res => res.json()).then(data => setDbDoctors(data)).catch(err => console.log(err));
     fetch('http://localhost:5000/api/reviews/all').then(res => res.json()).then(data => setDbReviews(data)).catch(err => console.log(err));
-    
-    // 🟢 Fetch Dynamic Home Content
+
     fetch('http://localhost:5000/api/settings/content')
       .then(res => res.json())
       .then(data => { if(data && data.heroTitle) setHomeData(data); })
@@ -30,7 +28,7 @@ const Home = () => {
 
   const handleBookAppointment = () => { navigate('/appointments'); window.scrollTo(0, 0); };
   
-  // 🟢 Dynamic Emergency Number
+  
   const handleEmergencyCall = () => { window.location.href = `tel:${homeData.emergencyNumber}`; };
 
   const dummyDoctorReviews = [ { id: 1, name: "Dr. Sarah Johnson", role: "Cardiologist", img: "https://randomuser.me/api/portraits/women/44.jpg", text: "The appointment routing system is incredibly efficient. A seamless interface." }, { id: 2, name: "Dr. Robert Martinez", role: "Pediatrician", img: "https://randomuser.me/api/portraits/men/32.jpg", text: "Patient records management is much more organized now." }, { id: 3, name: "Dr. Amanda Lee", role: "Neurologist", img: "https://randomuser.me/api/portraits/women/68.jpg", text: "Highly recommend this platform to all my colleagues." }, { id: 4, name: "Dr. James Wilson", role: "Surgeon", img: "https://randomuser.me/api/portraits/men/46.jpg", text: "Saves me hours of administrative work every week." } ];
@@ -42,7 +40,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-white">
       
-      {/* --- HERO SECTION --- */}
+     
       <section className="max-w-7xl mx-auto px-6 py-12">
         <div className="relative overflow-hidden rounded-3xl p-[3px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] group">
           <div className="absolute top-1/2 left-1/2 w-[200%] h-[200%] bg-[conic-gradient(transparent,transparent,transparent,#10b981)] animate-[spin_4s_linear_infinite] origin-center -translate-x-1/2 -translate-y-1/2"></div>
@@ -53,7 +51,7 @@ const Home = () => {
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-800">MediCare+</h1>
               </div>
               
-              {/* 🟢 DYNAMIC TEXT INJECTED HERE */}
+          
               <p className="text-xl text-gray-500 mb-2">{homeData.heroSubtitle}</p>
               <h2 className="text-3xl md:text-4xl font-bold text-green-600 mb-8 leading-tight">{homeData.heroTitle}</h2>
 
@@ -74,20 +72,20 @@ const Home = () => {
               </div>
             </div>
             
-            {/* 🟢 DYNAMIC BANNER INJECTED HERE */}
+          
             <div className="md:w-1/2 mt-10 md:mt-0 flex justify-end">
               <img 
                 src={`http://localhost:5000/uploads/banner.png?t=${new Date().getTime()}`} 
                 alt="Hospital Banner" 
                 className="w-full max-w-md object-cover rounded-xl shadow-md"
-                onError={(e) => { e.target.src = bannerImg; }} // Agar upload nahi kiya, to purana dikhega
+                onError={(e) => { e.target.src = bannerImg; }} 
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- AAPKA ORIGINAL CERTIFIED MARQUEE --- */}
+     
       <section className="py-12 bg-gray-50 overflow-hidden border-y border-gray-100 text-center">
         <h2 className="text-2xl md:text-3xl font-serif font-bold text-green-700 mb-8 uppercase tracking-wider">Certified & Excellence</h2>
         <div className="flex overflow-hidden relative w-full max-w-7xl mx-auto">
@@ -104,7 +102,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* --- VOICES OF TRUST --- */}
+   
       <section className="py-16 max-w-6xl mx-auto px-6">
         <div className="text-center mb-12"><h2 className="text-3xl md:text-4xl font-serif font-bold text-blue-900 mb-4">Voices of Trust</h2><p className="text-gray-500">Real stories from doctors and patients sharing their positive experiences.</p></div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-[500px] overflow-hidden">

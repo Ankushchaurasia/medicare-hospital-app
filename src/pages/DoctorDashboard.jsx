@@ -1,7 +1,6 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast'; 
 
 const DoctorDashboard = () => {
   const navigate = useNavigate();
@@ -64,61 +63,82 @@ const DoctorDashboard = () => {
   const pendingAppointmentsCount = visibleAppointments.filter(app => app.status === 'Pending').length;
   const unreadMessagesCount = messages.filter(msg => !msg.isRead).length;
 
-  const handleStatusUpdate = async (id, status) => { await fetch(`http://localhost:5000/api/appointments/update/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) }); fetchAppointments(); };
-  const handleDeleteAppointment = async (id) => { if(window.confirm("Delete this appointment?")) { await fetch(`http://localhost:5000/api/appointments/delete/${id}`, { method: 'DELETE' }); fetchAppointments(); } };
-  const toggleDoctorAvailability = async (id) => { await fetch(`http://localhost:5000/api/doctors/toggle/${id}`, { method: 'PUT' }); fetchDoctors(); };
-  const markMessageRead = async (id) => { await fetch(`http://localhost:5000/api/messages/mark-read/${id}`, { method: 'PUT' }); fetchMessages(); };
-  const handleDeleteDoctor = async (id) => { if(window.confirm("Delete this Doctor?")) { await fetch(`http://localhost:5000/api/doctors/delete/${id}`, { method: 'DELETE' }); fetchDoctors(); } };
-  const toggleCertVisibility = async (id) => { await fetch(`http://localhost:5000/api/certifications/toggle/${id}`, { method: 'PUT' }); fetchCertifications(); };
-  const handleDeleteCert = async (id) => { if(window.confirm("Delete this certificate?")) { await fetch(`http://localhost:5000/api/certifications/delete/${id}`, { method: 'DELETE' }); fetchCertifications(); } };
-  const handleToggleAdminRole = async (id) => { await fetch(`http://localhost:5000/api/admins/toggle-role/${id}`, { method: 'PUT' }); fetchAdmins(); };
-  const handleDeleteAdmin = async (id) => { if(window.confirm("Remove this Admin permanently?")) { await fetch(`http://localhost:5000/api/admins/delete/${id}`, { method: 'DELETE' }); fetchAdmins(); } };
-  const handleDeleteService = async (id) => { if(window.confirm("Are you sure you want to delete this Service?")) { await fetch(`http://localhost:5000/api/services/delete/${id}`, { method: 'DELETE' }); fetchServices(); } };
-
-  const handleDeleteReview = async (id) => { if(window.confirm("Are you sure you want to delete this review?")) { try { const res = await fetch(`http://localhost:5000/api/reviews/delete/${id}`, { method: 'DELETE' }); if(res.ok) fetchReviews(); } catch (error) { console.log("Error:", error); } } };
-
-  // 🟢 NEW: MESSAGE DELETE FUNCTION
-  const handleDeleteMessage = async (id) => {
-    if(window.confirm("Are you sure you want to delete this message?")) {
-      try {
-        const res = await fetch(`http://localhost:5000/api/messages/delete/${id}`, { method: 'DELETE' });
-        if(res.ok) {
-          fetchMessages(); // Delete hone ke baad list ko refresh karega
-        } else {
-          alert("Failed to delete message");
-        }
-      } catch (error) {
-        console.log("Error deleting message:", error);
-      }
-    }
+  // 🟢 NAYA SMART CONFIRMATION BOX (Window.confirm ki jagah)
+  const confirmAction = (message, actionFn) => {
+    toast((t) => (
+      <div className="flex flex-col gap-3 p-1">
+        <p className="font-bold text-gray-800 text-sm">{message}</p>
+        <div className="flex gap-2 justify-end mt-2">
+          <button 
+            onClick={() => { toast.dismiss(t.id); actionFn(); }} 
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition"
+          >
+            Yes, Delete
+          </button>
+          <button 
+            onClick={() => toast.dismiss(t.id)} 
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1.5 rounded-lg text-xs font-bold transition"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), { duration: Infinity, id: 'confirm-toast' }); // Ye tab tak band nahi hoga jab tak user click na kare
   };
 
-  const handleAddDoctor = async (e) => { e.preventDefault(); const fd = new FormData(); Object.keys(docForm).forEach(k => fd.append(k, docForm[k])); if (docImageFile) fd.append('image', docImageFile); fd.append('adminEmail', currentEmail); try { const res = await fetch('http://localhost:5000/api/doctors/add', { method: 'POST', body: fd }); const data = await res.json(); if (data.success) { alert("✅ Doctor Added!"); setShowDoctorModal(false); setDocImageFile(null); setDocForm({ name: '', specialty: '', successRate: '', experience: '', qualifications: '', location: '', fee: '', about: '' }); fetchDoctors(); } else { alert("❌ Error: " + data.message); } } catch (error) { alert("Server Error!"); } };
-  const handleAddService = async (e) => { e.preventDefault(); const fd = new FormData(); Object.keys(srvForm).forEach(k => fd.append(k, srvForm[k])); if (srvImageFile) fd.append('image', srvImageFile); const res = await fetch('http://localhost:5000/api/services/add', { method: 'POST', body: fd }); if (res.ok) { setShowServiceModal(false); setSrvImageFile(null); setSrvForm({ name: '', department: '', price: '', duration: '', description: '' }); fetchServices(); } };
-  const handleAddReview = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('patientName', revForm.patientName); fd.append('reviewText', revForm.reviewText); fd.append('rating', revForm.rating); if (revImageFile) fd.append('image', revImageFile); const res = await fetch('http://localhost:5000/api/reviews/add', { method: 'POST', body: fd }); if (res.ok) { setShowReviewModal(false); setRevImageFile(null); fetchReviews(); } };
-  const handleAddCert = async (e) => { e.preventDefault(); if(!certImageFile) return alert("Photo is required!"); const fd = new FormData(); fd.append('title', certForm.title); fd.append('image', certImageFile); const res = await fetch('http://localhost:5000/api/certifications/add', { method: 'POST', body: fd }); if(res.ok) { alert("✅ Added!"); setShowCertModal(false); setCertImageFile(null); setCertForm({title: ''}); fetchCertifications(); } };
-  const handleAddAdmin = async (e) => { e.preventDefault(); try { const res = await fetch('http://localhost:5000/api/admins/add', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(adminForm) }); const data = await res.json(); if(data.success) { alert("✅ Admin Created!"); setShowAdminModal(false); fetchAdmins(); setAdminForm({email:'', password:'', role:'Admin'}); } else alert("❌ " + data.message); } catch(err) { alert("Server Error"); } };
+  // 🟢 UPDATE ALL ACTIONS TO USE THE SMART CONFIRM BOX
+  const handleStatusUpdate = async (id, status) => { await fetch(`http://localhost:5000/api/appointments/update/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) }); fetchAppointments(); toast.success(`Appointment ${status}!`); };
+  const toggleDoctorAvailability = async (id) => { await fetch(`http://localhost:5000/api/doctors/toggle/${id}`, { method: 'PUT' }); fetchDoctors(); toast.success("Status Updated!"); };
+  const markMessageRead = async (id) => { await fetch(`http://localhost:5000/api/messages/mark-read/${id}`, { method: 'PUT' }); fetchMessages(); toast.success("Message marked as read!"); };
+  const toggleCertVisibility = async (id) => { await fetch(`http://localhost:5000/api/certifications/toggle/${id}`, { method: 'PUT' }); fetchCertifications(); toast.success("Visibility Updated!"); };
 
-  const handleUploadLogo = async (e) => { e.preventDefault(); if (!logoFile) return alert("Select logo!"); const fd = new FormData(); fd.append('logo', logoFile); const res = await fetch('http://localhost:5000/api/settings/upload-logo', { method: 'POST', body: fd }); if (res.ok) alert("✅ Logo Updated! (Refresh to see changes)"); };
-  const handleUploadBanner = async (e) => { e.preventDefault(); if (!bannerFile) return alert("Select banner image!"); const fd = new FormData(); fd.append('banner', bannerFile); const res = await fetch('http://localhost:5000/api/settings/upload-banner', { method: 'POST', body: fd }); if (res.ok) alert("✅ Banner Updated! (Refresh to see changes)"); };
+  const handleDeleteAppointment = (id) => confirmAction("Delete this appointment?", async () => { await fetch(`http://localhost:5000/api/appointments/delete/${id}`, { method: 'DELETE' }); fetchAppointments(); toast.success("Appointment deleted!"); });
+  const handleDeleteDoctor = (id) => confirmAction("Delete this Doctor Profile?", async () => { await fetch(`http://localhost:5000/api/doctors/delete/${id}`, { method: 'DELETE' }); fetchDoctors(); toast.success("Doctor Profile Deleted!"); });
+  const handleDeleteCert = (id) => confirmAction("Delete this certificate?", async () => { await fetch(`http://localhost:5000/api/certifications/delete/${id}`, { method: 'DELETE' }); fetchCertifications(); toast.success("Certificate Deleted!"); });
+  const handleDeleteAdmin = (id) => confirmAction("Remove this Admin permanently?", async () => { await fetch(`http://localhost:5000/api/admins/delete/${id}`, { method: 'DELETE' }); fetchAdmins(); toast.success("Admin Removed!"); });
+  const handleDeleteService = (id) => confirmAction("Are you sure you want to delete this Service?", async () => { await fetch(`http://localhost:5000/api/services/delete/${id}`, { method: 'DELETE' }); fetchServices(); toast.success("Service Deleted!"); });
+  const handleDeleteReview = (id) => confirmAction("Are you sure you want to delete this review?", async () => { await fetch(`http://localhost:5000/api/reviews/delete/${id}`, { method: 'DELETE' }); fetchReviews(); toast.success("Review Deleted!"); });
+  const handleDeleteMessage = (id) => confirmAction("Are you sure you want to delete this message?", async () => { await fetch(`http://localhost:5000/api/messages/delete/${id}`, { method: 'DELETE' }); fetchMessages(); toast.success("Message Deleted!"); });
+
+  const handleAddDoctor = async (e) => { 
+    e.preventDefault(); const fd = new FormData(); Object.keys(docForm).forEach(k => fd.append(k, docForm[k])); if (docImageFile) fd.append('image', docImageFile); fd.append('adminEmail', currentEmail); 
+    const loadingToast = toast.loading("Saving Profile...");
+    try { 
+      const res = await fetch('http://localhost:5000/api/doctors/add', { method: 'POST', body: fd }); const data = await res.json(); toast.dismiss(loadingToast);
+      if (data.success) { toast.success("Doctor Profile Created!"); setShowDoctorModal(false); setDocImageFile(null); setDocForm({ name: '', specialty: '', successRate: '', experience: '', qualifications: '', location: '', fee: '', about: '' }); fetchDoctors(); } else { toast.error(data.message || "Error creating profile"); } 
+    } catch (error) { toast.dismiss(loadingToast); toast.error("Server Error!"); } 
+  };
+
+  const handleAddService = async (e) => { 
+    e.preventDefault(); const fd = new FormData(); Object.keys(srvForm).forEach(k => fd.append(k, srvForm[k])); if (srvImageFile) fd.append('image', srvImageFile); 
+    const loadingToast = toast.loading("Adding Service...");
+    try {
+      const res = await fetch('http://localhost:5000/api/services/add', { method: 'POST', body: fd }); toast.dismiss(loadingToast);
+      if (res.ok) { toast.success("New Service Added!"); setShowServiceModal(false); setSrvImageFile(null); setSrvForm({ name: '', department: '', price: '', duration: '', description: '' }); fetchServices(); } else { toast.error("Failed to add service"); }
+    } catch(err) { toast.dismiss(loadingToast); toast.error("Error connecting to server"); }
+  };
+
+  const handleAddReview = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('patientName', revForm.patientName); fd.append('reviewText', revForm.reviewText); fd.append('rating', revForm.rating); if (revImageFile) fd.append('image', revImageFile); const res = await fetch('http://localhost:5000/api/reviews/add', { method: 'POST', body: fd }); if (res.ok) { setShowReviewModal(false); setRevImageFile(null); fetchReviews(); toast.success("Review Added!"); } };
+  const handleAddCert = async (e) => { e.preventDefault(); if(!certImageFile) return toast.error("Photo is required!"); const fd = new FormData(); fd.append('title', certForm.title); fd.append('image', certImageFile); const loadingToast = toast.loading("Uploading..."); const res = await fetch('http://localhost:5000/api/certifications/add', { method: 'POST', body: fd }); toast.dismiss(loadingToast); if(res.ok) { toast.success("Certificate Added!"); setShowCertModal(false); setCertImageFile(null); setCertForm({title: ''}); fetchCertifications(); } };
+  const handleAddAdmin = async (e) => { e.preventDefault(); try { const res = await fetch('http://localhost:5000/api/admins/add', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(adminForm) }); const data = await res.json(); if(data.success) { toast.success("Admin Created Successfully!"); setShowAdminModal(false); fetchAdmins(); setAdminForm({email:'', password:'', role:'Admin'}); } else toast.error(data.message); } catch(err) { toast.error("Server Error"); } };
+
+  const handleUploadLogo = async (e) => { e.preventDefault(); if (!logoFile) return toast.error("Select a logo first!"); const fd = new FormData(); fd.append('logo', logoFile); const loadingToast = toast.loading("Updating Logo..."); const res = await fetch('http://localhost:5000/api/settings/upload-logo', { method: 'POST', body: fd }); toast.dismiss(loadingToast); if (res.ok) toast.success("Logo Updated! (Refresh to see changes)"); };
+  const handleUploadBanner = async (e) => { e.preventDefault(); if (!bannerFile) return toast.error("Select a banner first!"); const fd = new FormData(); fd.append('banner', bannerFile); const loadingToast = toast.loading("Updating Banner..."); const res = await fetch('http://localhost:5000/api/settings/upload-banner', { method: 'POST', body: fd }); toast.dismiss(loadingToast); if (res.ok) toast.success("Banner Updated! (Refresh to see changes)"); };
   
   const handleUpdateHomeContent = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); const loadingToast = toast.loading("Saving content...");
     try {
-      const res = await fetch('http://localhost:5000/api/settings/content/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeData) });
-      if (res.ok) alert("✅ Home Data Updated Successfully!");
-    } catch (err) { alert("Error updating data!"); }
+      const res = await fetch('http://localhost:5000/api/settings/content/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeData) }); toast.dismiss(loadingToast);
+      if (res.ok) toast.success("Home Data Updated Successfully!");
+    } catch (err) { toast.dismiss(loadingToast); toast.error("Error updating data!"); }
   };
 
-  const handleLogout = () => { 
-    localStorage.removeItem('adminRole'); 
-    localStorage.removeItem('adminEmail'); 
-    navigate('/'); 
-  };
+  const handleLogout = () => { localStorage.removeItem('adminRole'); localStorage.removeItem('adminEmail'); toast.success("Logged out successfully"); navigate('/'); };
 
   return (
     <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
-      
+      <Toaster position="top-center" reverseOrder={false} />
+
       <div className="md:hidden absolute top-0 left-0 w-full bg-white shadow-sm z-30 flex justify-between items-center p-4">
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-3xl text-green-800">☰</button>
         <h2 className="text-lg font-bold text-green-800 flex items-center gap-2"><span className="text-2xl">⚕️</span> {currentRole}</h2>
@@ -150,36 +170,12 @@ const DoctorDashboard = () => {
 
       <main className="flex-1 p-4 md:p-8 pt-20 md:pt-8 overflow-y-auto bg-gray-50 relative">
         {activeTab === 'appointments' && ( <div className="max-w-7xl mx-auto"><h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8">{currentRole === 'Superadmin' ? 'All Appointments' : 'My Appointments'}</h1><div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto"><table className="w-full text-left min-w-[700px]"><thead><tr className="bg-gray-100 text-gray-600 text-sm uppercase"><th className="p-4 font-bold">Patient</th><th className="p-4 font-bold">Details</th><th className="p-4 font-bold">Status</th><th className="p-4 font-bold text-center">Actions</th></tr></thead><tbody className="divide-y divide-gray-100">{visibleAppointments.length === 0 ? (<tr><td colSpan="4" className="p-6 text-center text-gray-500 font-bold">No appointments found.</td></tr>) : (visibleAppointments.map((app) => (<tr key={app._id} className="hover:bg-gray-50"><td className="p-4"><p className="font-bold">{app.name}</p><p className="text-xs text-gray-500">📞 {app.phone}</p></td><td className="p-4"><p className="font-semibold">{app.date} | {app.time}</p><p className="text-xs text-blue-600 font-medium">{app.department || app.doctorName}</p></td><td className="p-4"><span className={`px-3 py-1 rounded-full text-xs font-bold ${app.status === 'Accepted' ? 'bg-green-100 text-green-700' : app.status === 'Rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>{app.status || 'Pending'}</span></td><td className="p-4 text-center space-x-2"><button onClick={() => { setSelectedPatient(app); setShowPatientModal(true); }} className="px-3 py-1.5 bg-blue-100 text-blue-700 text-xs font-bold rounded">View</button>{(app.status === 'Pending' || !app.status) && (<><button onClick={() => handleStatusUpdate(app._id, 'Accepted')} className="px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded">Accept</button><button onClick={() => handleStatusUpdate(app._id, 'Rejected')} className="px-3 py-1.5 bg-yellow-500 text-white text-xs font-bold rounded">Reject</button></>)}{currentRole === 'Superadmin' && <button onClick={() => handleDeleteAppointment(app._id)} className="px-3 py-1.5 bg-red-100 text-red-600 text-xs font-bold rounded">Delete</button>}</td></tr>)))}</tbody></table></div></div> )}
-        {activeTab === 'doctors' && ( <div className="max-w-7xl mx-auto"><div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"><h1 className="text-2xl md:text-3xl font-bold text-gray-800">{currentRole === 'Superadmin' ? 'Manage Doctors' : 'My Profile'}</h1>{currentRole === 'Superadmin' && <button onClick={() => setShowDoctorModal(true)} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold w-full md:w-auto">+ Add New Doctor</button>}{currentRole === 'Admin' && !myDoctorProfile && <button onClick={() => setShowDoctorModal(true)} className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold w-full md:w-auto shadow-md">👤 Create My Profile</button>}</div><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">{visibleDoctors.length === 0 && currentRole === 'Admin' ? (<div className="col-span-full bg-white p-10 text-center rounded-2xl border-2 border-dashed border-gray-300"><h3 className="text-xl font-bold text-gray-600 mb-2">Profile Not Found</h3><p className="text-gray-500">Please create your profile to receive appointments.</p></div>) : (visibleDoctors.map(doc => (<div key={doc._id} className="bg-white p-6 text-center rounded-2xl shadow-sm border border-gray-100 relative"><div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-bold ${doc.isAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{doc.isAvailable ? 'Online' : 'Offline'}</div>{currentRole === 'Superadmin' && <button onClick={() => handleDeleteDoctor(doc._id)} className="absolute top-4 left-4 text-red-400 hover:text-red-600 text-lg">🗑️</button>}<img src={doc.image || 'https://via.placeholder.com/150'} className="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-gray-50"/><h3 className="font-bold text-lg text-gray-800">{doc.name}</h3><p className="text-sm text-blue-600 font-bold mb-4">{doc.specialty}</p><button onClick={() => toggleDoctorAvailability(doc._id)} className={`w-full py-2 rounded-lg font-bold text-sm transition shadow-sm ${doc.isAvailable ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-green-500 text-white hover:bg-green-600'}`}>{doc.isAvailable ? 'Set as Offline' : 'Set as Online'}</button></div>)))}</div></div> )}
+        
+        {activeTab === 'doctors' && ( <div className="max-w-7xl mx-auto"><div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"><h1 className="text-2xl md:text-3xl font-bold text-gray-800">{currentRole === 'Superadmin' ? 'Manage Doctors' : 'My Profile'}</h1>{currentRole === 'Superadmin' && <button onClick={() => setShowDoctorModal(true)} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold w-full md:w-auto">+ Add New Doctor</button>}{currentRole === 'Admin' && !myDoctorProfile && <button onClick={() => setShowDoctorModal(true)} className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold w-full md:w-auto shadow-md">👤 Create My Profile</button>}</div><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">{visibleDoctors.length === 0 && currentRole === 'Admin' ? (<div className="col-span-full bg-white p-10 text-center rounded-2xl border-2 border-dashed border-gray-300"><h3 className="text-xl font-bold text-gray-600 mb-2">Profile Not Found</h3><p className="text-gray-500">Please create your profile to receive appointments.</p></div>) : (visibleDoctors.map(doc => (<div key={doc._id} className="bg-white p-6 text-center rounded-2xl shadow-sm border border-gray-100 relative"><div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-bold ${doc.isAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{doc.isAvailable ? 'Online' : 'Offline'}</div>{(currentRole === 'Superadmin' || currentRole === 'Admin') && <button onClick={() => handleDeleteDoctor(doc._id)} title="Delete Profile" className="absolute top-4 left-4 bg-white/90 w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 shadow-md transition z-10">🗑️</button>}<img src={doc.image || 'https://via.placeholder.com/150'} className="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-4 border-gray-50"/><h3 className="font-bold text-lg text-gray-800">{doc.name}</h3><p className="text-sm text-blue-600 font-bold mb-4">{doc.specialty}</p><button onClick={() => toggleDoctorAvailability(doc._id)} className={`w-full py-2 rounded-lg font-bold text-sm transition shadow-sm ${doc.isAvailable ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-green-500 text-white hover:bg-green-600'}`}>{doc.isAvailable ? 'Set as Offline' : 'Set as Online'}</button></div>)))}</div></div> )}
+        
         {activeTab === 'services' && ( <div className="max-w-7xl mx-auto"><div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"><h1 className="text-2xl md:text-3xl font-bold text-gray-800">Manage Services</h1><button onClick={() => setShowServiceModal(true)} className="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold w-full md:w-auto">+ Add New Service</button></div><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">{services.map(srv => (<div key={srv._id} className="bg-white rounded-2xl p-6 text-center shadow-sm border border-gray-100 relative group"><button onClick={() => handleDeleteService(srv._id)} className="absolute top-4 right-4 bg-white/90 p-2 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 shadow-md transition z-10 opacity-100">🗑️</button><img src={srv.image || 'https://via.placeholder.com/300'} className="w-full h-32 object-cover rounded-xl mb-4" /><h3 className="font-bold text-xl text-gray-800">{srv.name}</h3><p className="text-sm text-gray-500 mb-2">{srv.department}</p><p className="text-xl font-black text-green-600">₹{srv.price}</p></div>))}</div></div> )}
         
-        {/* 🟢 MESSAGES TAB UPDATED WITH DELETE BUTTON 🟢 */}
-        {activeTab === 'messages' && ( 
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8">User Messages</h1>
-            <div className="grid gap-4">
-              {messages.map((msg) => (
-                <div key={msg._id} className={`p-6 rounded-2xl shadow-sm border relative ${msg.isRead ? 'bg-white' : 'bg-[#f4fbf7] border-green-200'}`}>
-                  
-                  {/* 👇 Delete Button 👇 */}
-                  <button onClick={() => handleDeleteMessage(msg._id)} className="absolute top-4 right-4 text-red-400 hover:text-red-600 text-xl transition-colors">
-                    🗑️
-                  </button>
-
-                  <div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-2 pr-8">
-                    <div>
-                      <h3 className="font-bold text-lg">{msg.name} <span className="text-sm font-normal text-gray-500">({msg.email})</span></h3>
-                      <p className="text-xs text-gray-400">{new Date(msg.createdAt).toLocaleString()}</p>
-                    </div>
-                    {!msg.isRead && <button onClick={() => markMessageRead(msg._id)} className="text-sm bg-green-500 text-white px-4 py-1.5 rounded-full font-bold w-max">Mark Read</button>}
-                  </div>
-                  <h4 className="font-bold text-gray-700 mb-1">Subject: {msg.subject}</h4>
-                  <p className="text-gray-600 bg-gray-50 p-4 rounded-xl text-sm">{msg.message}</p>
-                </div>
-              ))}
-            </div>
-          </div> 
-        )}
+        {activeTab === 'messages' && ( <div className="max-w-7xl mx-auto"><h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8">User Messages</h1><div className="grid gap-4">{messages.map((msg) => (<div key={msg._id} className={`p-6 rounded-2xl shadow-sm border relative ${msg.isRead ? 'bg-white' : 'bg-[#f4fbf7] border-green-200'}`}><button onClick={() => handleDeleteMessage(msg._id)} className="absolute top-4 right-4 text-red-400 hover:text-red-600 text-xl transition-colors">🗑️</button><div className="flex flex-col md:flex-row justify-between md:items-center mb-4 gap-2 pr-8"><div><h3 className="font-bold text-lg">{msg.name} <span className="text-sm font-normal text-gray-500">({msg.email})</span></h3><p className="text-xs text-gray-400">{new Date(msg.createdAt).toLocaleString()}</p></div>{!msg.isRead && <button onClick={() => markMessageRead(msg._id)} className="text-sm bg-green-500 text-white px-4 py-1.5 rounded-full font-bold w-max">Mark Read</button>}</div><h4 className="font-bold text-gray-700 mb-1">Subject: {msg.subject}</h4><p className="text-gray-600 bg-gray-50 p-4 rounded-xl text-sm">{msg.message}</p></div>))}</div></div> )}
 
         {currentRole === 'Superadmin' && (
           <>

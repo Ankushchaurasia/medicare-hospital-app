@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Add Certification
+
 router.post('/add', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success: false, message: 'Image required' });
@@ -26,7 +26,6 @@ router.post('/add', upload.single('image'), async (req, res) => {
   } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 
-// Get All Certifications
 router.get('/all', async (req, res) => {
   try {
     const certs = await Certification.find().sort({ createdAt: -1 });
@@ -34,7 +33,7 @@ router.get('/all', async (req, res) => {
   } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// Toggle Enable/Disable
+
 router.put('/toggle/:id', async (req, res) => {
   try {
     const cert = await Certification.findById(req.params.id);
@@ -44,7 +43,6 @@ router.put('/toggle/:id', async (req, res) => {
   } catch (error) { res.status(500).json({ success: false }); }
 });
 
-// Delete Certification
 router.delete('/delete/:id', async (req, res) => {
   try {
     await Certification.findByIdAndDelete(req.params.id);

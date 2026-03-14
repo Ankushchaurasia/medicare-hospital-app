@@ -166,10 +166,10 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-sm border-t-4 border-t-green-500 border-b border-b-green-100 sticky top-0 z-50">
       
-      {/* 🟢 TOP BAR (Always Visible) */}
+  
       <div className="flex items-center justify-between px-4 lg:px-8 py-4 max-w-7xl mx-auto">
         
-        {/* 1. 🟢 LOGO SECTION (DYNAMIC LOGO WITH CACHE-BUSTING) */}
+      
         <Link to="/" className="flex items-center gap-2 md:gap-3 z-50">
           <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center overflow-hidden">
             <img 
@@ -177,12 +177,12 @@ const Navbar = () => {
               alt="Logo" 
               className="w-full h-full object-contain"
               onError={(e) => {
-                // Agar admin ne logo upload nahi kiya hai, to emoji wala backup icon dikhega
+               
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'flex';
               }}
             />
-            {/* Backup Emoji Icon (Hidden by default) */}
+        
             <div style={{display: 'none'}} className="w-full h-full bg-blue-50 rounded-full items-center justify-center border-2 border-green-500 shadow-sm">
               <span className="text-xl">⚕️</span>
             </div>
@@ -193,7 +193,6 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* 2. Desktop Center Links (Hidden on Mobile & Tablet Portrait) */}
         <div className="hidden lg:flex items-center gap-6 xl:gap-8 px-6 py-3 bg-white rounded-full shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-green-50 text-sm font-medium">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path; 
@@ -210,7 +209,6 @@ const Navbar = () => {
           })}
         </div>
 
-        {/* 3. Desktop Action Buttons */}
         <div className="hidden lg:flex items-center gap-4">
           <Link to="/doctor-admin/login" className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-green-700 bg-white border-2 border-green-500 rounded-full hover:bg-green-50 transition shadow-sm whitespace-nowrap">
             <span>👤 Staff/Admin</span>
@@ -231,7 +229,7 @@ const Navbar = () => {
           </SignedIn>
         </div>
 
-        {/* 4. Mobile Menu Button & Profile (Visible ONLY on Mobile) */}
+        
         <div className="flex lg:hidden items-center gap-4">
           
           <SignedIn>
@@ -240,7 +238,7 @@ const Navbar = () => {
             </div>
           </SignedIn>
 
-          {/* Hamburger Icon */}
+         
           <button 
             onClick={() => setIsOpen(!isOpen)} 
             className="text-green-700 text-3xl focus:outline-none z-50"
@@ -251,11 +249,10 @@ const Navbar = () => {
 
       </div>
 
-      {/* 🟢 MOBILE DROPDOWN MENU */}
       {isOpen && (
         <div className="lg:hidden absolute top-[72px] left-0 w-full bg-white border-t border-green-100 shadow-xl py-4 px-6 flex flex-col gap-4 z-40">
           
-          {/* Mobile Navigation Links */}
+       
           <div className="flex flex-col gap-2">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
@@ -263,7 +260,7 @@ const Navbar = () => {
                 <Link 
                   key={link.name} 
                   to={link.path} 
-                  onClick={() => setIsOpen(false)} // Link click hone par menu band ho jayega
+                  onClick={() => setIsOpen(false)} 
                   className={`px-4 py-3 rounded-xl text-base font-bold transition-colors ${isActive ? "bg-green-50 text-green-600" : "text-gray-700 hover:bg-gray-50"}`}
                 >
                   {link.name}
@@ -272,7 +269,7 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Mobile Action Buttons */}
+      
           <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
             <Link 
               to="/doctor-admin/login" 

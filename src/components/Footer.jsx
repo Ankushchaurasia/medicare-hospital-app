@@ -30,10 +30,10 @@ const Footer = () => {
   return (
     <footer className="bg-gray-50 pt-10 pb-6 px-4 md:px-8 font-sans relative">
       
-      {/* 🌟 COMPACT FLOATING DARK CARD 🌟 */}
+      
       <div className="max-w-7xl mx-auto bg-[#022c22] rounded-[2rem] p-8 md:p-10 relative overflow-hidden shadow-xl">
         
-        {/* Background Glowing Circles */}
+       
         <div className="absolute top-0 right-0 w-72 h-72 bg-green-500 rounded-full mix-blend-screen filter blur-[80px] opacity-20"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500 rounded-full mix-blend-screen filter blur-[80px] opacity-20"></div>
 
@@ -52,7 +52,7 @@ const Footer = () => {
                 Redefining healthcare with technology. Book appointments and consult top doctors seamlessly.
               </p>
               <div className="flex flex-col gap-1 text-xs text-gray-300 mb-4">
-                <a href="tel:+919289841669" className="hover:text-green-400 transition-colors">📞 +91 92898 41669</a>
+                <a href="tel:+919289841669" className="hover:text-green-400 transition-colors">📞 +91 7307520789</a>
                 <a href="mailto:ac2682004@gmail.com" className="hover:text-green-400 transition-colors">✉️ ac2682004@gmail.com</a>
               </div>
             </div>

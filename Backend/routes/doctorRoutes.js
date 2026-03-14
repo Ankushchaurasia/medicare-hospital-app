@@ -5,18 +5,18 @@ const path = require('path');
 const fs = require('fs');
 const Doctor = require('../models/Doctor'); 
 
-// Uploads folder check
+
 const uploadDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-// Multer setup
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => cb(null, Date.now() + '-doc-' + file.originalname.replace(/\s+/g, '-'))
 });
 const upload = multer({ storage: storage });
 
-// 1. ADD NEW DOCTOR
+
 router.post('/add', upload.single('image'), async (req, res) => {
   try {
     let imageUrl = '';
@@ -28,7 +28,7 @@ router.post('/add', upload.single('image'), async (req, res) => {
   } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 
-// 2. GET ALL DOCTORS
+
 router.get('/all', async (req, res) => {
   try {
     const doctors = await Doctor.find().sort({ createdAt: -1 });
@@ -36,8 +36,7 @@ router.get('/all', async (req, res) => {
   } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 
-// 👇 YAHI WO MISSING ROUTE THA JO MERA CHHOOT GAYA THA 👇
-// 3. GET SINGLE DOCTOR BY ID (For Profile Page)
+
 router.get('/:id', async (req, res) => {
   try {
     const doctor = await Doctor.findById(req.params.id);
@@ -48,7 +47,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// 4. TOGGLE ONLINE / OFFLINE STATUS
+
 router.put('/toggle/:id', async (req, res) => {
   try {
     const doctor = await Doctor.findById(req.params.id);
@@ -59,7 +58,7 @@ router.put('/toggle/:id', async (req, res) => {
   } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 
-// 5. DELETE DOCTOR
+
 router.delete('/delete/:id', async (req, res) => {
   try {
     await Doctor.findByIdAndDelete(req.params.id);
