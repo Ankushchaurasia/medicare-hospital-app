@@ -16,7 +16,7 @@ const MyBookings = () => {
     
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/appointments/track/${phone}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/track/${phone}`);
       const data = await res.json();
       setBookings(data);
       setHasSearched(true);

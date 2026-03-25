@@ -19,7 +19,7 @@ router.post('/add', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success: false, message: 'Please upload a photo!' });
     
-    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    const imageUrl = `${process.env.API_URL}/uploads/${req.file.filename}`;
     const newService = new Service({ ...req.body, image: imageUrl });
     await newService.save();
     

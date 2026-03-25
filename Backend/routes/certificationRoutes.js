@@ -18,7 +18,7 @@ const upload = multer({ storage: storage });
 router.post('/add', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ success: false, message: 'Image required' });
-    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    const imageUrl = `${process.env.API_URL}/uploads/${req.file.filename}`;
     
     const newCert = new Certification({ title: req.body.title, image: imageUrl });
     await newCert.save();

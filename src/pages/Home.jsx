@@ -17,10 +17,10 @@ const Home = () => {
   });
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/doctors/all').then(res => res.json()).then(data => setDbDoctors(data)).catch(err => console.log(err));
-    fetch('http://localhost:5000/api/reviews/all').then(res => res.json()).then(data => setDbReviews(data)).catch(err => console.log(err));
+    fetch(`${import.meta.env.VITE_API_URL}/api/doctors/all`).then(res => res.json()).then(data => setDbDoctors(data)).catch(err => console.log(err));
+    fetch(`${import.meta.env.VITE_API_URL}/api/reviews/all`).then(res => res.json()).then(data => setDbReviews(data)).catch(err => console.log(err));
 
-    fetch('http://localhost:5000/api/settings/content')
+    fetch(`${import.meta.env.VITE_API_URL}/api/settings/content`)
       .then(res => res.json())
       .then(data => { if(data && data.heroTitle) setHomeData(data); })
       .catch(err => console.log(err));
@@ -75,7 +75,7 @@ const Home = () => {
           
             <div className="md:w-1/2 mt-10 md:mt-0 flex justify-end">
               <img 
-                src={`http://localhost:5000/uploads/banner.png?t=${new Date().getTime()}`} 
+                src={`${import.meta.env.VITE_API_URL}/uploads/banner.png?t=${new Date().getTime()}`} 
                 alt="Hospital Banner" 
                 className="w-full max-w-md object-cover rounded-xl shadow-md"
                 onError={(e) => { e.target.src = bannerImg; }} 

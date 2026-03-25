@@ -10,7 +10,7 @@ const Doctors = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/doctors/all');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/doctors/all`);
         const data = await response.json();
         setDoctors(data.filter(doc => doc.isAvailable)); 
         setLoading(false);

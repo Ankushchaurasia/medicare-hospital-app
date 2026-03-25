@@ -21,7 +21,7 @@ router.post('/add', upload.single('image'), async (req, res) => {
   try {
     let imageUrl = '';
     if (req.file) {
-      imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      imageUrl = `${process.env.API_URL}/uploads/${req.file.filename}`;
     }
     const newReview = new Review({
       patientName: req.body.patientName,
