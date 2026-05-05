@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const serviceSchema = new mongoose.Schema({
-  name: { type: String, required: true }, // e.g., "Heart Rating"
-  department: { type: String, required: true }, // e.g., "Cardiology"
-  price: { type: Number, required: true }, // e.g., 1200
-  image: { type: String, required: true }, // सर्विस की फोटो
+  name: { type: String, required: true }, 
+  department: { type: String, required: true }, 
+  price: { type: Number, required: true }, 
+  image: { type: String, required: true }, 
   status: { type: String, default: 'Active' }
 }, { timestamps: true });
 

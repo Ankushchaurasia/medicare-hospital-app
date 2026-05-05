@@ -36,6 +36,6 @@ app.listen(PORT, () => {
 app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
-app.use('/api/certifications', require('./routes/certificationRoutes')); // 👈 Nayi line
+app.use('/api/certifications', require('./routes/certificationRoutes')); 
 app.use('/api/admins', require('./routes/adminRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));

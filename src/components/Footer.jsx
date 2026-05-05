@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
+import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState('');
@@ -56,15 +56,30 @@ const Footer = () => {
                 <a href="mailto:ac2682004@gmail.com" className="hover:text-green-400 transition-colors">✉️ ac2682004@gmail.com</a>
               </div>
             </div>
-            {/* Small Social Icons */}
+            {/* Small Social Icons
             <div className="flex gap-2">
               <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-500 hover:text-[#022c22] transition-colors text-xs font-bold">FB</a>
               <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-500 hover:text-[#022c22] transition-colors text-xs font-bold">IG</a>
               <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-500 hover:text-[#022c22] transition-colors text-xs font-bold">IN</a>
             </div>
-          </div>
+          </div> */}
+{/* Small Social Icons */}
+{/* Small Social Icons */}
+<div className="flex gap-2">
+  <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-500 hover:text-[#022c22] transition-colors text-sm">
+    <FaFacebookF />
+  </a>
+  <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-500 hover:text-[#022c22] transition-colors text-sm">
+    <FaInstagram />
+  </a>
+  <a href="#" className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-green-500 hover:text-[#022c22] transition-colors text-sm">
+    <FaLinkedinIn />
+  </a>
+</div>
 
-          {/* COLUMN 2: Links */}
+
+</div>
+        
           <div>
             <h3 className="text-base font-bold mb-4 text-white/90 border-b-2 border-green-500 inline-block pb-1">Quick Links</h3>
             <ul className="space-y-2.5 text-gray-400 text-sm font-medium">

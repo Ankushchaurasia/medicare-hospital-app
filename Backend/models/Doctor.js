@@ -13,7 +13,7 @@ const doctorSchema = new mongoose.Schema({
   fee: { type: Number, required: true },
   about: { type: String, required: true },
   isAvailable: { type: Boolean, default: true },
-  adminEmail: { type: String } // 👈 NAYA FIELD: Ye yaad rakhega ki kis admin ne ye profile banayi hai
+  adminEmail: { type: String } 
 }, { timestamps: true });
 
 module.exports = mongoose.model('Doctor', doctorSchema);

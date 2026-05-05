@@ -42,7 +42,7 @@ const Doctors = () => {
                 <div className="bg-[#f0fdf4] text-green-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
                   🎖️ {doc.experience} Experience
                 </div>
-                {/* यह लिंक अब प्रोफाइल पेज पर ले जाएगा */}
+        
                 <Link to={`/doctor/${doc._id}`} className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition-colors shadow-md flex items-center justify-center">
                   » View Profile & Book
                 </Link>

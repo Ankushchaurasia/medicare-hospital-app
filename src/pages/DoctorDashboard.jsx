@@ -1,3 +1,7 @@
+
+
+
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'; 
@@ -30,7 +34,8 @@ const DoctorDashboard = () => {
   const [selectedPatient, setSelectedPatient] = useState(null); 
   const [showPatientModal, setShowPatientModal] = useState(false);
 
-  const [docForm, setDocForm] = useState({ name: '', specialty: '', successRate: '', experience: '', qualifications: '', location: '', fee: '', about: '' });
+  // 🟢 1. doctorEmail नाम का नया फील्ड जोड़ा गया है
+  const [docForm, setDocForm] = useState({ name: '', specialty: '', successRate: '', experience: '', qualifications: '', location: '', fee: '', about: '', doctorEmail: '' });
   const [docImageFile, setDocImageFile] = useState(null); 
   const [srvForm, setSrvForm] = useState({ name: '', department: '', price: '', duration: '', description: '' });
   const [srvImageFile, setSrvImageFile] = useState(null); 
@@ -48,14 +53,14 @@ const DoctorDashboard = () => {
     }
   }, [currentRole]);
 
-  const fetchAppointments = async () => { try { const res = await fetch('http://localhost:5000/api/appointments/all'); setAppointments(await res.json()); } catch (err) {} };
-  const fetchDoctors = async () => { try { const res = await fetch('http://localhost:5000/api/doctors/all'); setDoctors(await res.json()); } catch (err) {} };
-  const fetchServices = async () => { try { const res = await fetch('http://localhost:5000/api/services/all'); setServices(await res.json()); } catch (err) {} };
-  const fetchMessages = async () => { try { const res = await fetch('http://localhost:5000/api/messages/all'); setMessages(await res.json()); } catch (err) {} };
-  const fetchReviews = async () => { try { const res = await fetch('http://localhost:5000/api/reviews/all'); setReviews(await res.json()); } catch (err) {} };
-  const fetchCertifications = async () => { try { const res = await fetch('http://localhost:5000/api/certifications/all'); setCertifications(await res.json()); } catch (err) {} };
-  const fetchAdmins = async () => { try { const res = await fetch('http://localhost:5000/api/admins/all'); setAdminList(await res.json()); } catch (err) {} };
-  const fetchHomeContent = async () => { try { const res = await fetch('http://localhost:5000/api/settings/content'); const data = await res.json(); setHomeData(data); } catch (err) {} };
+  const fetchAppointments = async () => { try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/all`); setAppointments(await res.json()); } catch (err) {} };
+  const fetchDoctors = async () => { try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/doctors/all`); setDoctors(await res.json()); } catch (err) {} };
+  const fetchServices = async () => { try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/services/all`); setServices(await res.json()); } catch (err) {} };
+  const fetchMessages = async () => { try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/messages/all`); setMessages(await res.json()); } catch (err) {} };
+  const fetchReviews = async () => { try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews/all`); setReviews(await res.json()); } catch (err) {} };
+  const fetchCertifications = async () => { try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/certifications/all`); setCertifications(await res.json()); } catch (err) {} };
+  const fetchAdmins = async () => { try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admins/all`); setAdminList(await res.json()); } catch (err) {} };
+  const fetchHomeContent = async () => { try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/settings/content`); const data = await res.json(); setHomeData(data); } catch (err) {} };
 
   const myDoctorProfile = doctors.find(doc => doc.adminEmail === currentEmail);
   const visibleDoctors = currentRole === 'Superadmin' ? doctors : doctors.filter(doc => doc.adminEmail === currentEmail);
@@ -63,75 +68,70 @@ const DoctorDashboard = () => {
   const pendingAppointmentsCount = visibleAppointments.filter(app => app.status === 'Pending').length;
   const unreadMessagesCount = messages.filter(msg => !msg.isRead).length;
 
-  // 🟢 NAYA SMART CONFIRMATION BOX (Window.confirm ki jagah)
   const confirmAction = (message, actionFn) => {
     toast((t) => (
       <div className="flex flex-col gap-3 p-1">
         <p className="font-bold text-gray-800 text-sm">{message}</p>
         <div className="flex gap-2 justify-end mt-2">
-          <button 
-            onClick={() => { toast.dismiss(t.id); actionFn(); }} 
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition"
-          >
-            Yes, Delete
-          </button>
-          <button 
-            onClick={() => toast.dismiss(t.id)} 
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1.5 rounded-lg text-xs font-bold transition"
-          >
-            Cancel
-          </button>
+          <button onClick={() => { toast.dismiss(t.id); actionFn(); }} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition">Yes, Delete</button>
+          <button onClick={() => toast.dismiss(t.id)} className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1.5 rounded-lg text-xs font-bold transition">Cancel</button>
         </div>
       </div>
-    ), { duration: Infinity, id: 'confirm-toast' }); // Ye tab tak band nahi hoga jab tak user click na kare
+    ), { duration: Infinity, id: 'confirm-toast' });
   };
 
-  // 🟢 UPDATE ALL ACTIONS TO USE THE SMART CONFIRM BOX
-  const handleStatusUpdate = async (id, status) => { await fetch(`http://localhost:5000/api/appointments/update/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) }); fetchAppointments(); toast.success(`Appointment ${status}!`); };
-  const toggleDoctorAvailability = async (id) => { await fetch(`http://localhost:5000/api/doctors/toggle/${id}`, { method: 'PUT' }); fetchDoctors(); toast.success("Status Updated!"); };
-  const markMessageRead = async (id) => { await fetch(`http://localhost:5000/api/messages/mark-read/${id}`, { method: 'PUT' }); fetchMessages(); toast.success("Message marked as read!"); };
-  const toggleCertVisibility = async (id) => { await fetch(`http://localhost:5000/api/certifications/toggle/${id}`, { method: 'PUT' }); fetchCertifications(); toast.success("Visibility Updated!"); };
+  const handleStatusUpdate = async (id, status) => { await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/update/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) }); fetchAppointments(); toast.success(`Appointment ${status}!`); };
+  const toggleDoctorAvailability = async (id) => { await fetch(`${import.meta.env.VITE_API_URL}/api/doctors/toggle/${id}`, { method: 'PUT' }); fetchDoctors(); toast.success("Status Updated!"); };
+  const markMessageRead = async (id) => { await fetch(`${import.meta.env.VITE_API_URL}/api/messages/mark-read/${id}`, { method: 'PUT' }); fetchMessages(); toast.success("Message marked as read!"); };
+  const toggleCertVisibility = async (id) => { await fetch(`${import.meta.env.VITE_API_URL}/api/certifications/toggle/${id}`, { method: 'PUT' }); fetchCertifications(); toast.success("Visibility Updated!"); };
 
-  const handleDeleteAppointment = (id) => confirmAction("Delete this appointment?", async () => { await fetch(`http://localhost:5000/api/appointments/delete/${id}`, { method: 'DELETE' }); fetchAppointments(); toast.success("Appointment deleted!"); });
-  const handleDeleteDoctor = (id) => confirmAction("Delete this Doctor Profile?", async () => { await fetch(`http://localhost:5000/api/doctors/delete/${id}`, { method: 'DELETE' }); fetchDoctors(); toast.success("Doctor Profile Deleted!"); });
-  const handleDeleteCert = (id) => confirmAction("Delete this certificate?", async () => { await fetch(`http://localhost:5000/api/certifications/delete/${id}`, { method: 'DELETE' }); fetchCertifications(); toast.success("Certificate Deleted!"); });
-  const handleDeleteAdmin = (id) => confirmAction("Remove this Admin permanently?", async () => { await fetch(`http://localhost:5000/api/admins/delete/${id}`, { method: 'DELETE' }); fetchAdmins(); toast.success("Admin Removed!"); });
-  const handleDeleteService = (id) => confirmAction("Are you sure you want to delete this Service?", async () => { await fetch(`http://localhost:5000/api/services/delete/${id}`, { method: 'DELETE' }); fetchServices(); toast.success("Service Deleted!"); });
-  const handleDeleteReview = (id) => confirmAction("Are you sure you want to delete this review?", async () => { await fetch(`http://localhost:5000/api/reviews/delete/${id}`, { method: 'DELETE' }); fetchReviews(); toast.success("Review Deleted!"); });
-  const handleDeleteMessage = (id) => confirmAction("Are you sure you want to delete this message?", async () => { await fetch(`http://localhost:5000/api/messages/delete/${id}`, { method: 'DELETE' }); fetchMessages(); toast.success("Message Deleted!"); });
+  const handleDeleteAppointment = (id) => confirmAction("Delete this appointment?", async () => { await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/delete/${id}`, { method: 'DELETE' }); fetchAppointments(); toast.success("Appointment deleted!"); });
+  const handleDeleteDoctor = (id) => confirmAction("Delete this Doctor Profile?", async () => { await fetch(`${import.meta.env.VITE_API_URL}/api/doctors/delete/${id}`, { method: 'DELETE' }); fetchDoctors(); toast.success("Doctor Profile Deleted!"); });
+  const handleDeleteCert = (id) => confirmAction("Delete this certificate?", async () => { await fetch(`${import.meta.env.VITE_API_URL}/api/certifications/delete/${id}`, { method: 'DELETE' }); fetchCertifications(); toast.success("Certificate Deleted!"); });
+  const handleDeleteAdmin = (id) => confirmAction("Remove this Admin permanently?", async () => { await fetch(`${import.meta.env.VITE_API_URL}/api/admins/delete/${id}`, { method: 'DELETE' }); fetchAdmins(); toast.success("Admin Removed!"); });
+  const handleDeleteService = (id) => confirmAction("Are you sure you want to delete this Service?", async () => { await fetch(`${import.meta.env.VITE_API_URL}/api/services/delete/${id}`, { method: 'DELETE' }); fetchServices(); toast.success("Service Deleted!"); });
+  const handleDeleteReview = (id) => confirmAction("Are you sure you want to delete this review?", async () => { await fetch(`${import.meta.env.VITE_API_URL}/api/reviews/delete/${id}`, { method: 'DELETE' }); fetchReviews(); toast.success("Review Deleted!"); });
+  const handleDeleteMessage = (id) => confirmAction("Are you sure you want to delete this message?", async () => { await fetch(`${import.meta.env.VITE_API_URL}/api/messages/delete/${id}`, { method: 'DELETE' }); fetchMessages(); toast.success("Message Deleted!"); });
 
+  // 🟢 2. Yaha backend ko ab sahi email bheja jayega
   const handleAddDoctor = async (e) => { 
-    e.preventDefault(); const fd = new FormData(); Object.keys(docForm).forEach(k => fd.append(k, docForm[k])); if (docImageFile) fd.append('image', docImageFile); fd.append('adminEmail', currentEmail); 
+    e.preventDefault(); 
+    const fd = new FormData(); 
+    Object.keys(docForm).forEach(k => {
+      if(k !== 'doctorEmail') fd.append(k, docForm[k]); 
+    });
+    if (docImageFile) fd.append('image', docImageFile); 
+
+    // Asli Jadu Yaha Hai: Agar Superadmin bana raha hai to form wala email daalo, nahi to khud ka email daalo
+    const assignedEmail = currentRole === 'Superadmin' ? docForm.doctorEmail : currentEmail;
+    fd.append('adminEmail', assignedEmail); 
+    
     const loadingToast = toast.loading("Saving Profile...");
     try { 
-      const res = await fetch('http://localhost:5000/api/doctors/add', { method: 'POST', body: fd }); const data = await res.json(); toast.dismiss(loadingToast);
-      if (data.success) { toast.success("Doctor Profile Created!"); setShowDoctorModal(false); setDocImageFile(null); setDocForm({ name: '', specialty: '', successRate: '', experience: '', qualifications: '', location: '', fee: '', about: '' }); fetchDoctors(); } else { toast.error(data.message || "Error creating profile"); } 
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/doctors/add`, { method: 'POST', body: fd }); 
+      const data = await res.json(); 
+      toast.dismiss(loadingToast);
+      if (data.success) { 
+        toast.success("Doctor Profile Created!"); 
+        setShowDoctorModal(false); setDocImageFile(null); 
+        setDocForm({ name: '', specialty: '', successRate: '', experience: '', qualifications: '', location: '', fee: '', about: '', doctorEmail: '' }); 
+        fetchDoctors(); 
+      } else { toast.error(data.message || "Error creating profile"); } 
     } catch (error) { toast.dismiss(loadingToast); toast.error("Server Error!"); } 
   };
 
-  const handleAddService = async (e) => { 
-    e.preventDefault(); const fd = new FormData(); Object.keys(srvForm).forEach(k => fd.append(k, srvForm[k])); if (srvImageFile) fd.append('image', srvImageFile); 
-    const loadingToast = toast.loading("Adding Service...");
-    try {
-      const res = await fetch('http://localhost:5000/api/services/add', { method: 'POST', body: fd }); toast.dismiss(loadingToast);
-      if (res.ok) { toast.success("New Service Added!"); setShowServiceModal(false); setSrvImageFile(null); setSrvForm({ name: '', department: '', price: '', duration: '', description: '' }); fetchServices(); } else { toast.error("Failed to add service"); }
-    } catch(err) { toast.dismiss(loadingToast); toast.error("Error connecting to server"); }
-  };
-
-  const handleAddReview = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('patientName', revForm.patientName); fd.append('reviewText', revForm.reviewText); fd.append('rating', revForm.rating); if (revImageFile) fd.append('image', revImageFile); const res = await fetch('http://localhost:5000/api/reviews/add', { method: 'POST', body: fd }); if (res.ok) { setShowReviewModal(false); setRevImageFile(null); fetchReviews(); toast.success("Review Added!"); } };
-  const handleAddCert = async (e) => { e.preventDefault(); if(!certImageFile) return toast.error("Photo is required!"); const fd = new FormData(); fd.append('title', certForm.title); fd.append('image', certImageFile); const loadingToast = toast.loading("Uploading..."); const res = await fetch('http://localhost:5000/api/certifications/add', { method: 'POST', body: fd }); toast.dismiss(loadingToast); if(res.ok) { toast.success("Certificate Added!"); setShowCertModal(false); setCertImageFile(null); setCertForm({title: ''}); fetchCertifications(); } };
-  const handleAddAdmin = async (e) => { e.preventDefault(); try { const res = await fetch('http://localhost:5000/api/admins/add', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(adminForm) }); const data = await res.json(); if(data.success) { toast.success("Admin Created Successfully!"); setShowAdminModal(false); fetchAdmins(); setAdminForm({email:'', password:'', role:'Admin'}); } else toast.error(data.message); } catch(err) { toast.error("Server Error"); } };
-
-  const handleUploadLogo = async (e) => { e.preventDefault(); if (!logoFile) return toast.error("Select a logo first!"); const fd = new FormData(); fd.append('logo', logoFile); const loadingToast = toast.loading("Updating Logo..."); const res = await fetch('http://localhost:5000/api/settings/upload-logo', { method: 'POST', body: fd }); toast.dismiss(loadingToast); if (res.ok) toast.success("Logo Updated! (Refresh to see changes)"); };
-  const handleUploadBanner = async (e) => { e.preventDefault(); if (!bannerFile) return toast.error("Select a banner first!"); const fd = new FormData(); fd.append('banner', bannerFile); const loadingToast = toast.loading("Updating Banner..."); const res = await fetch('http://localhost:5000/api/settings/upload-banner', { method: 'POST', body: fd }); toast.dismiss(loadingToast); if (res.ok) toast.success("Banner Updated! (Refresh to see changes)"); };
+  const handleAddService = async (e) => { e.preventDefault(); const fd = new FormData(); Object.keys(srvForm).forEach(k => fd.append(k, srvForm[k])); if (srvImageFile) fd.append('image', srvImageFile); const loadingToast = toast.loading("Adding Service..."); try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/services/add`, { method: 'POST', body: fd }); toast.dismiss(loadingToast); if (res.ok) { toast.success("New Service Added!"); setShowServiceModal(false); setSrvImageFile(null); setSrvForm({ name: '', department: '', price: '', duration: '', description: '' }); fetchServices(); } else { toast.error("Failed to add service"); } } catch(err) { toast.dismiss(loadingToast); toast.error("Error connecting to server"); } };
+  const handleAddReview = async (e) => { e.preventDefault(); const fd = new FormData(); fd.append('patientName', revForm.patientName); fd.append('reviewText', revForm.reviewText); fd.append('rating', revForm.rating); if (revImageFile) fd.append('image', revImageFile); const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reviews/add`, { method: 'POST', body: fd }); if (res.ok) { setShowReviewModal(false); setRevImageFile(null); fetchReviews(); toast.success("Review Added!"); } };
+  const handleAddCert = async (e) => { e.preventDefault(); if(!certImageFile) return toast.error("Photo is required!"); const fd = new FormData(); fd.append('title', certForm.title); fd.append('image', certImageFile); const loadingToast = toast.loading("Uploading..."); const res = await fetch(`${import.meta.env.VITE_API_URL}/api/certifications/add`, { method: 'POST', body: fd }); toast.dismiss(loadingToast); if(res.ok) { toast.success("Certificate Added!"); setShowCertModal(false); setCertImageFile(null); setCertForm({title: ''}); fetchCertifications(); } };
   
-  const handleUpdateHomeContent = async (e) => {
-    e.preventDefault(); const loadingToast = toast.loading("Saving content...");
-    try {
-      const res = await fetch('http://localhost:5000/api/settings/content/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeData) }); toast.dismiss(loadingToast);
-      if (res.ok) toast.success("Home Data Updated Successfully!");
-    } catch (err) { toast.dismiss(loadingToast); toast.error("Error updating data!"); }
-  };
+  const handleToggleAdminRole = async (id) => { await fetch(`${import.meta.env.VITE_API_URL}/api/admins/toggle-role/${id}`, { method: 'PUT' }); fetchAdmins(); toast.success("Admin Role Changed!"); };
+  
+  const handleAddAdmin = async (e) => { e.preventDefault(); try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admins/add`, { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(adminForm) }); const data = await res.json(); if(data.success) { toast.success("Admin Created Successfully!"); setShowAdminModal(false); fetchAdmins(); setAdminForm({email:'', password:'', role:'Admin'}); } else toast.error(data.message); } catch(err) { toast.error("Server Error"); } };
+
+  const handleUploadLogo = async (e) => { e.preventDefault(); if (!logoFile) return toast.error("Select a logo first!"); const fd = new FormData(); fd.append('logo', logoFile); const loadingToast = toast.loading("Updating Logo..."); const res = await fetch(`${import.meta.env.VITE_API_URL}/api/settings/upload-logo`, { method: 'POST', body: fd }); toast.dismiss(loadingToast); if (res.ok) toast.success("Logo Updated! (Refresh to see changes)"); };
+  const handleUploadBanner = async (e) => { e.preventDefault(); if (!bannerFile) return toast.error("Select a banner first!"); const fd = new FormData(); fd.append('banner', bannerFile); const loadingToast = toast.loading("Updating Banner..."); const res = await fetch(`${import.meta.env.VITE_API_URL}/api/settings/upload-banner`, { method: 'POST', body: fd }); toast.dismiss(loadingToast); if (res.ok) toast.success("Banner Updated! (Refresh to see changes)"); };
+  
+  const handleUpdateHomeContent = async (e) => { e.preventDefault(); const loadingToast = toast.loading("Saving content..."); try { const res = await fetch(`${import.meta.env.VITE_API_URL}/api/settings/content/update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(homeData) }); toast.dismiss(loadingToast); if (res.ok) toast.success("Home Data Updated Successfully!"); } catch (err) { toast.dismiss(loadingToast); toast.error("Error updating data!"); } };
 
   const handleLogout = () => { localStorage.removeItem('adminRole'); localStorage.removeItem('adminEmail'); toast.success("Logged out successfully"); navigate('/'); };
 
@@ -220,9 +220,43 @@ const DoctorDashboard = () => {
 
         {/* MODALS */}
         {showAdminModal && (<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"><div className="bg-white p-6 md:p-8 rounded-3xl w-full max-w-sm"><h2 className="text-2xl font-bold mb-6">Create Admin Access</h2><form onSubmit={handleAddAdmin} className="flex flex-col gap-4"><input type="email" placeholder="Admin Email" required className="p-3 border rounded-xl outline-none bg-gray-50" value={adminForm.email} onChange={e => setAdminForm({...adminForm, email: e.target.value})} /><input type="text" placeholder="Set Password" required className="p-3 border rounded-xl outline-none bg-gray-50" value={adminForm.password} onChange={e => setAdminForm({...adminForm, password: e.target.value})} /><select className="p-3 border rounded-xl bg-white outline-none" value={adminForm.role} onChange={e => setAdminForm({...adminForm, role: e.target.value})}><option value="Admin">Normal Admin</option><option value="Superadmin">Superadmin (Full Access)</option></select><div className="flex gap-4 mt-2"><button type="submit" className="bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-xl flex-1 font-bold">Create</button><button type="button" onClick={() => setShowAdminModal(false)} className="bg-gray-200 hover:bg-gray-300 px-4 py-3 rounded-xl flex-1 font-bold">Cancel</button></div></form></div></div>)}
-        {showDoctorModal && (<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 overflow-y-auto"><div className="bg-white p-6 md:p-8 rounded-3xl w-full max-w-2xl my-8"><h2 className="text-2xl font-bold mb-6">{currentRole === 'Superadmin' ? 'Add New Doctor' : 'Create My Profile'}</h2><form onSubmit={handleAddDoctor} className="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" placeholder="Name (e.g. Dr. John) *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.name} onChange={(e) => setDocForm({...docForm, name: e.target.value})} /><input type="text" placeholder="Specialty *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.specialty} onChange={(e) => setDocForm({...docForm, specialty: e.target.value})} /><div className="flex flex-col justify-center"><label className="text-xs font-bold text-gray-500 mb-1">Upload Photo *</label><input type="file" accept="image/*" required className="border p-2 rounded-xl bg-gray-50" onChange={(e) => setDocImageFile(e.target.files[0])} /></div><input type="text" placeholder="Success Rate" className="border p-3 rounded-xl bg-gray-50" value={docForm.successRate} onChange={(e) => setDocForm({...docForm, successRate: e.target.value})} /><input type="text" placeholder="Experience *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.experience} onChange={(e) => setDocForm({...docForm, experience: e.target.value})} /><input type="text" placeholder="Qualifications *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.qualifications} onChange={(e) => setDocForm({...docForm, qualifications: e.target.value})} /><input type="text" placeholder="Location *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.location} onChange={(e) => setDocForm({...docForm, location: e.target.value})} /><input type="number" placeholder="Consultation Fee (₹) *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.fee} onChange={(e) => setDocForm({...docForm, fee: e.target.value})} /><textarea placeholder="About Doctor..." required className="border p-3 rounded-xl resize-none md:col-span-2 bg-gray-50" rows="3" value={docForm.about} onChange={(e) => setDocForm({...docForm, about: e.target.value})}></textarea><div className="flex gap-4 mt-4 md:col-span-2"><button type="submit" className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold flex-1">Save Profile</button><button type="button" onClick={() => setShowDoctorModal(false)} className="bg-gray-200 px-6 py-3 rounded-xl font-bold flex-1">Cancel</button></div></form></div></div>)}
+        
+        {/* 🟢 3. Modal Form me naya Email input box joda gaya hai */}
+        {showDoctorModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 overflow-y-auto">
+            <div className="bg-white p-6 md:p-8 rounded-3xl w-full max-w-2xl my-8">
+              <h2 className="text-2xl font-bold mb-6">{currentRole === 'Superadmin' ? 'Add New Doctor' : 'Create My Profile'}</h2>
+              <form onSubmit={handleAddDoctor} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* Asli Email dalne ki jagah - Sirf Superadmin ko dikhegi */}
+                {currentRole === 'Superadmin' && (
+                  <div className="md:col-span-2">
+                    <label className="text-xs font-bold text-red-500 mb-1">Doctor's Login Email (MUST MATCH THEIR ADMIN ACCOUNT) *</label>
+                    <input type="email" placeholder="e.g. dr.ankur@medicare.com" required className="border-2 border-red-200 p-3 rounded-xl bg-red-50 w-full" value={docForm.doctorEmail} onChange={(e) => setDocForm({...docForm, doctorEmail: e.target.value})} />
+                  </div>
+                )}
+
+                <input type="text" placeholder="Name (e.g. Dr. John) *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.name} onChange={(e) => setDocForm({...docForm, name: e.target.value})} />
+                <input type="text" placeholder="Specialty *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.specialty} onChange={(e) => setDocForm({...docForm, specialty: e.target.value})} />
+                <div className="flex flex-col justify-center"><label className="text-xs font-bold text-gray-500 mb-1">Upload Photo *</label><input type="file" accept="image/*" required className="border p-2 rounded-xl bg-gray-50" onChange={(e) => setDocImageFile(e.target.files[0])} /></div>
+                <input type="text" placeholder="Success Rate" className="border p-3 rounded-xl bg-gray-50" value={docForm.successRate} onChange={(e) => setDocForm({...docForm, successRate: e.target.value})} />
+                <input type="text" placeholder="Experience *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.experience} onChange={(e) => setDocForm({...docForm, experience: e.target.value})} />
+                <input type="text" placeholder="Qualifications *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.qualifications} onChange={(e) => setDocForm({...docForm, qualifications: e.target.value})} />
+                <input type="text" placeholder="Location *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.location} onChange={(e) => setDocForm({...docForm, location: e.target.value})} />
+                <input type="number" placeholder="Consultation Fee (₹) *" required className="border p-3 rounded-xl bg-gray-50" value={docForm.fee} onChange={(e) => setDocForm({...docForm, fee: e.target.value})} />
+                <textarea placeholder="About Doctor..." required className="border p-3 rounded-xl resize-none md:col-span-2 bg-gray-50" rows="3" value={docForm.about} onChange={(e) => setDocForm({...docForm, about: e.target.value})}></textarea>
+                
+                <div className="flex gap-4 mt-4 md:col-span-2">
+                  <button type="submit" className="bg-green-600 text-white px-6 py-3 rounded-xl font-bold flex-1">Save Profile</button>
+                  <button type="button" onClick={() => setShowDoctorModal(false)} className="bg-gray-200 px-6 py-3 rounded-xl font-bold flex-1">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {showCertModal && (<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"><div className="bg-white p-6 md:p-8 rounded-3xl w-full max-w-sm"><h2 className="text-2xl font-bold mb-6">Add Certificate</h2><form onSubmit={handleAddCert} className="flex flex-col gap-4"><input type="text" placeholder="Title" required className="p-3 border rounded-xl bg-gray-50" value={certForm.title} onChange={e => setCertForm({title: e.target.value})} /><input type="file" accept="image/*" required className="p-2 border rounded-xl bg-gray-50" onChange={e => setCertImageFile(e.target.files[0])} /><div className="flex gap-4 mt-2"><button type="submit" className="bg-blue-600 text-white px-4 py-3 rounded-xl flex-1 font-bold">Save</button><button type="button" onClick={() => setShowCertModal(false)} className="bg-gray-200 px-4 py-3 rounded-xl flex-1 font-bold">Cancel</button></div></form></div></div>)}
-        {showPatientModal && selectedPatient && (<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"><div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl"><div className="bg-green-800 p-4 text-white flex justify-between"><h2 className="text-xl font-bold">Booking Details</h2><button onClick={() => setShowPatientModal(false)} className="text-2xl">✕</button></div><div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6"><p><b>Name:</b> {selectedPatient.name}</p><p><b>Phone:</b> {selectedPatient.phone}</p><p><b>For:</b> {selectedPatient.doctorName || selectedPatient.department}</p><p><b>Time:</b> {selectedPatient.date} | {selectedPatient.time}</p><p><b>Fee:</b> ₹{selectedPatient.fee}</p><p><b>Payment:</b> {selectedPatient.paymentMethod}</p></div></div></div>)}
+        {showPatientModal && selectedPatient && (<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"><div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl"><div className="bg-green-800 p-4 text-white flex justify-between"><h2 className="text-xl font-bold">Booking Details</h2><button onClick={() => setShowPatientModal(false)} className="text-2xl">✕</button></div><div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6"><p><b>Name:</b> {selectedPatient.name}</p><p><b>Phone:</b> {selectedPatient.phone}</p><p><b>For:</b> {selectedPatient.doctorName || selectedPatient.department}</p><p><b>Time:</b> {selectedPatient.date} | {selectedPatient.time}</p><p><b>Fee:</b> ₹{selectedPatient.fee}</p><p><b>Payment:</b> {selectedPatient.paymentMethod || 'Paid ✅'}</p></div></div></div>)}
         {showServiceModal && (<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"><div className="bg-white p-6 md:p-8 rounded-3xl w-full max-w-md"><h2 className="text-2xl font-bold mb-6">Add New Service</h2><form onSubmit={handleAddService} className="flex flex-col gap-4"><input type="text" placeholder="Service Name" required className="border p-3 rounded-xl bg-gray-50" value={srvForm.name} onChange={e => setSrvForm({...srvForm, name: e.target.value})} /><input type="text" placeholder="Department" required className="border p-3 rounded-xl bg-gray-50" value={srvForm.department} onChange={e => setSrvForm({...srvForm, department: e.target.value})} /><input type="file" accept="image/*" required className="border p-2 rounded-xl bg-gray-50" onChange={e => setSrvImageFile(e.target.files[0])} /><input type="number" placeholder="Price (₹)" required className="border p-3 rounded-xl bg-gray-50" value={srvForm.price} onChange={e => setSrvForm({...srvForm, price: e.target.value})} /><div className="flex gap-4 mt-2"><button type="submit" className="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold flex-1">Save Service</button><button type="button" onClick={() => setShowServiceModal(false)} className="bg-gray-200 px-6 py-3 rounded-xl font-bold flex-1">Cancel</button></div></form></div></div>)}
         {showReviewModal && (<div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"><div className="bg-white p-6 md:p-8 rounded-3xl w-full max-w-md"><h2 className="text-2xl font-bold mb-6">Add Patient Review</h2><form onSubmit={handleAddReview} className="flex flex-col gap-4"><input type="text" placeholder="Patient Name" required className="p-3 border rounded-xl bg-gray-50" value={revForm.patientName} onChange={e => setRevForm({...revForm, patientName: e.target.value})} /><input type="file" accept="image/*" className="p-2 border rounded-xl bg-gray-50" onChange={e => setRevImageFile(e.target.files[0])} /><textarea placeholder="Review Text..." required rows="3" className="p-3 border rounded-xl resize-none bg-gray-50" value={revForm.reviewText} onChange={e => setRevForm({...revForm, reviewText: e.target.value})}></textarea><select className="p-3 border rounded-xl bg-white" value={revForm.rating} onChange={e => setRevForm({...revForm, rating: Number(e.target.value)})}> <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option><option value="4">⭐⭐⭐⭐ (4 Stars)</option><option value="3">⭐⭐⭐ (3 Stars)</option></select><div className="flex gap-4 mt-2"><button type="submit" className="bg-yellow-500 text-white px-6 py-3 rounded-xl font-bold flex-1">Save Review</button><button type="button" onClick={() => setShowReviewModal(false)} className="bg-gray-200 px-6 py-3 rounded-xl font-bold flex-1">Cancel</button></div></form></div></div>)}
       </main>

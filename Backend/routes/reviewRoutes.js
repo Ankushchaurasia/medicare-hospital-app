@@ -50,7 +50,7 @@ router.delete('/delete/:id', async (req, res) => {
 
 router.delete('/delete/:id', async (req, res) => {
   try {
-    const Review = require('../models/Review'); // Model import
+    const Review = require('../models/Review'); 
     await Review.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: 'Review Deleted' });
   } catch (error) { 

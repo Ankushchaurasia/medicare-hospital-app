@@ -10,7 +10,7 @@ const DoctorProfile = () => {
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🟢 Nayi States (Bill dikhane aur loading ke liye)
+ 
   const [generatedBill, setGeneratedBill] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santosh Kumar - Professional Resume</title>
+    <style>
+        :root {
+            --primary-color: #1A365D;
+            --secondary-color: #2B6CB0;
+            --text-color: #2D3748;
+            --light-bg: #F7FAFC;
+        }
+        
+        /* A4 Page Setup */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        body { 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            max-width: 210mm; 
+            margin: 0 auto; 
+            color: var(--text-color); 
+            line-height: 1.45; /* Reduced to ensure it fits */
+            font-size: 13.5px; /* Slightly smaller for one-page print */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: white;
+            box-sizing: border-box;
+            min-height: 297mm;
+            max-height: 297mm;
+            overflow: hidden;
+        }
+
+        * {
+            page-break-inside: avoid;
+            page-break-after: avoid;
+            page-break-before: avoid;
+        }
+
+        header { 
+            background-color: var(--primary-color); 
+            color: white; 
+            padding: 30px 20px; /* Adjusted header size */
+            text-align: center; 
+        }
+        
+        h1 { 
+            margin: 0 0 5px 0; 
+            font-size: 2.4em; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+        }
+        
+        .contact-info { 
+            font-size: 1em; 
+            opacity: 0.95; 
+            line-height: 1.5;
+        }
+
+        .contact-info a {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .container {
+            display: flex;
+            padding: 25px 30px; /* Reduced padding */
+            box-sizing: border-box;
+        }
+        
+        .left-column {
+            width: 62%;
+            padding-right: 30px;
+            border-right: 2px solid var(--light-bg);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .right-column {
+            width: 38%;
+            padding-left: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h2 { 
+            color: var(--primary-color); 
+            border-bottom: 2px solid var(--secondary-color); 
+            padding-bottom: 5px; 
+            margin-top: 0; 
+            text-transform: uppercase; 
+            font-size: 1.2em; 
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        
+        .section { margin-bottom: 20px; } /* Safe spacing to prevent page break */
+        
+        .job-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: baseline; 
+            margin-bottom: 4px;
+        }
+        
+        .company { font-weight: bold; font-size: 1.1em; color: var(--text-color); }
+        .dates { font-style: italic; color: #718096; font-size: 0.9em; }
+        .role { font-weight: 600; color: var(--secondary-color); margin-bottom: 6px; }
+        
+        ul { margin-top: 4px; padding-left: 18px; color: #4A5568; margin-bottom: 8px; }
+        li { margin-bottom: 6px; } 
+        
+        /* Skills Styling */
+        .skill-category { margin-bottom: 15px; } 
+        .skill-category strong { display: block; color: var(--primary-color); margin-bottom: 5px; font-size: 1em; }
+        .skill-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; margin-top: 0; margin-bottom: 0;}
+        .skill-list li { 
+            background-color: var(--light-bg); 
+            padding: 6px 12px; 
+            border-radius: 4px; 
+            font-size: 0.9em; 
+            border: 1px solid #E2E8F0;
+            margin-bottom: 0;
+        }
+
+        /* Education Styling */
+        .edu-item { margin-bottom: 15px; } 
+        .edu-degree { font-weight: bold; color: var(--text-color); font-size: 1em; }
+        .edu-school { font-style: italic; color: #718096; font-size: 0.9em; margin-top: 2px; }
+
+        /* Strict Print Rules */
+        @media print {
+            body { 
+                box-shadow: none; 
+                max-width: 100%; 
+                margin: 0; 
+                line-height: 1.35;
+                font-size: 13px;
+                min-height: 297mm;
+                max-height: 297mm;
+            }
+            @page {
+                margin: 0.5cm; /* Safe print margin to hold everything on Page 1 */
+                size: A4 portrait;
+            }
+            .container, .left-column, .right-column, .section, h2, p, ul, li { 
+                page-break-inside: avoid; 
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Santosh Kumar</h1>
+        <div class="contact-info">
+            Achitpur, Chhota Mirzapur, Mirzapur<br>
+            Phone: 6394378537 | Email: <a href="mailto:Skumar1993ch@gmail.com">Skumar1993ch@gmail.com</a><br>
+            DOB: 02.07.1993 | Nationality: Indian | Gender: Male
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="left-column">
+            <div class="section">
+                <h2>Professional Summary</h2>
+                <p style="margin-top: 0;">Results-driven Sales and Marketing professional seeking an opportunity to utilize my skills and qualifications in a collaborative environment. Dedicated to making a meaningful impact and advancing my professional journey through effective communication, relationship-building, and driving consistent revenue growth.</p>
+            </div>
+
+            <div class="section">
+                <h2>Work Experience</h2>
+                
+                <div class="job-header">
+                    <span class="company">Yunch Bite</span>
+                    <span class="dates">Feb 2026 – Present</span>
+                </div>
+                <div class="role">Sales & Marketing Professional</div>
+                <ul>
+                    <li>Spearhead daily sales initiatives and communicate effectively with customers to understand their needs and provide tailored solutions.</li>
+                    <li>Apply targeted marketing strategies to increase brand awareness and expand product reach.</li>
+                    <li>Maintain strong client relationships to drive repeat business and ensure high levels of customer satisfaction.</li>
+                </ul>
+                
+                <div class="job-header" style="margin-top: 20px;">
+                    <span class="company">DS Group</span>
+                    <span class="dates">Jul 2023 – Jul 2025</span>
+                </div>
+                <div class="role">Inside Sales Representative (ISR)</div>
+                <ul>
+                    <li>Managed territory sales operations, successfully building and maintaining long-term relationships with key vendor accounts.</li>
+                    <li>Executed promotional campaigns to boost local market share and improve product visibility.</li>
+                    <li>Tracked daily sales data, managed inventory needs, and reported on key performance metrics to management.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="section">
+                <h2>Skills</h2>
+                
+                <div class="skill-category">
+                    <strong>Sales</strong>
+                    <ul class="skill-list">
+                        <li>B2B/B2C Sales</li>
+                        <li>Territory Management</li>
+                        <li>Lead Generation</li>
+                        <li>Vendor Relations</li>
+                    </ul>
+                </div>
+
+                <div class="skill-category">
+                    <strong>Marketing</strong>
+                    <ul class="skill-list">
+                        <li>Brand Awareness</li>
+                        <li>Promotional Campaigns</li>
+                        <li>Market Analysis</li>
+                    </ul>
+                </div>
+
+                <div class="skill-category">
+                    <strong>Soft Skills</strong>
+                    <ul class="skill-list">
+                        <li>Communication</li>
+                        <li>Client Relations</li>
+                        <li>Negotiation</li>
+                        <li>Problem-Solving</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Education</h2>
+                
+                <div class="edu-item">
+                    <div class="edu-degree">Bachelor of Arts (B.A.)</div>
+                    <div class="edu-school">Mahatma Gandhi Kashi Vidyapith, 2020</div>
+                </div>
+                <div class="edu-item">
+                    <div class="edu-degree">ITI (Electrical Trade)</div>
+                    <div class="edu-school">NCVT, 2017</div>
+                </div>
+                <div class="edu-item">
+                    <div class="edu-degree">Intermediate (12th)</div>
+                    <div class="edu-school">UP Board, 2013</div>
+                </div>
+
+                <div class="edu-item" style="margin-bottom: 0;">
+                    <div class="edu-degree">High School (10th)</div>
+                    <div class="edu-school">UP Board, 2009</div>
+                </div>
+            </div>
+            <div class="section" style="margin-bottom: 0;">
+                <h2>Languages</h2>
+                <ul class="skill-list">
+                    <li>Hindi</li>
+                    <li>English</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

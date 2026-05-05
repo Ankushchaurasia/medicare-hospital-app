@@ -5,15 +5,15 @@ const crypto = require('crypto');
 
 
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_YOUR_KEY_HERE',     // 👈 Yahan apni Test Key ID dalein
-  key_secret: 'YOUR_SECRET_KEY_HERE'    // 👈 Yahan apna Test Secret dalein
+  key_id: 'rzp_test_YOUR_KEY_HERE',     
+  key_secret: 'YOUR_SECRET_KEY_HERE'   
 });
 
 
 router.post('/create-order', async (req, res) => {
   try {
     const options = {
-      amount: req.body.amount * 100, // ₹1 = 100 Paise (Razorpay paise me calculate karta hai)
+      amount: req.body.amount * 100, 
       currency: "INR",
       receipt: "receipt_" + Date.now(),
     };
@@ -25,15 +25,15 @@ router.post('/create-order', async (req, res) => {
   }
 });
 
-// 2. Verify Payment (Payment success hone ke baad check karna)
+
 router.post('/verify', async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
     
-    // Security check: Match signature
+    
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
-      .createHmac("sha256", 'YOUR_SECRET_KEY_HERE') // 👈 Yahan wapas apna Secret dalein
+      .createHmac("sha256", 'YOUR_SECRET_KEY_HERE') 
       .update(sign.toString())
       .digest("hex");
 

@@ -5,12 +5,12 @@ const appointmentSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   age: { type: String },
   gender: { type: String },
-  doctorName: { type: String },  // Naya add kiya
+  doctorName: { type: String },  
   department: { type: String },
   date: { type: String, required: true },
   time: { type: String, required: true },
-  fee: { type: String },         // Naya add kiya
-  paymentMethod: { type: String, default: 'Cash' }, // Naya add kiya
+  fee: { type: String },         
+  paymentMethod: { type: String, default: 'Cash' }, 
   status: { type: String, default: 'Pending' }
 }, { timestamps: true });
 
